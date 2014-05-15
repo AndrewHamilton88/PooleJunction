@@ -83,6 +83,7 @@
     <Compile Include="ArgumentsInterpreter.cs" />
     <Compile Include="Bid.cs" />
     <Compile Include="Coordinate.cs" />
+    <Compile Include="Returner.cs" />
     <Compile Include="DetectorRead.cs" />
     <Compile Include="FFTTrunManager.cs" />
     <Compile Include="FinalFunction.cs" />

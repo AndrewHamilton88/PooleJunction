@@ -23,6 +23,8 @@ namespace ParamincsSNMPcontrol
         int MaxGreenTime = FixedVariables.MaximumGreenTime;
         int IntergreenTime = FixedVariables.IntergreenTime;
         int IntergreenStageNumber = FixedVariables.IntergreenStageNumber;
+        int MaxTimeSinceReleased = FixedVariables.MaxTimeSinceReleased;
+        double MaxTimeSinceReleasedWeighting = FixedVariables.MaxTimeSinceReleasedWeighting;
 
         int[] IntergreenAndLength = new int[2]; //This is the Intergreen Number followed by the Stage Length
 
@@ -38,6 +40,37 @@ namespace ParamincsSNMPcontrol
             return Returner;
         }
 
+        public double WeightingTimeSinceReleased(int SelectedStage, double[] TimeSinceReleased, List<int[]> PhaseList, List<double[]> CurrentRoadState)
+        {
+            double Returner = 0.0;
+            bool CurrentQueue = false;
+
+            int[] ActivePhases = PhaseList[SelectedStage - 1];
+            double TempMaxTime = 0.0;
+            foreach (int Phase in ActivePhases)
+            {
+                if (TimeSinceReleased[Phase - 1] > TempMaxTime)
+                {
+                    TempMaxTime = TimeSinceReleased[Phase - 1];
+                }
+                if (CurrentRoadState[Phase - 1][0] > 0)                 //This checks if there is any demand for the phase
+                {
+                    CurrentQueue = true;
+                }
+            }
+            if (TempMaxTime >= MaxTimeSinceReleased && CurrentQueue == true)   //This says that if there is any demand for the phase and it exceeds the time limit then it will be allowed to have the weighting
+            {
+                Returner = MaxTimeSinceReleasedWeighting;
+            }
+            else
+            {
+                Returner = 1.0;             //This weighting will always be one if the time elapsed has not exceeded the threshold so that the bid is normally calculated.
+            }
+
+            return Returner;
+        }
+
+
         /// <summary>
         /// This function will return a single stage followed by an intergreen time. The performance measure is "Lowest Delay divided by entire cycle length".
         /// This is because if we return least delay for a variable length single stage then we are not making a fair comparison as one answer could be 20 seconds
@@ -49,7 +82,7 @@ namespace ParamincsSNMPcontrol
         /// <param name="CurrentRoadState"></param>
         /// <param name="PreviousStageNumber"></param>
         /// <returns></returns>
-        public List<int[]> RunAlgorithm(List<double[]> CurrentRoadState, int PreviousStageNumber, List<int[]> PhaseList)
+        public List<int[]> RunAlgorithm(List<double[]> CurrentRoadState, int PreviousStageNumber, List<int[]> PhaseList, double[] TimeSinceReleased)
         {
             List<int[]> BestCyclePlan = new List<int[]>();
             double LeastDelay = 9999999999;
@@ -64,27 +97,43 @@ namespace ParamincsSNMPcontrol
 	            {
                     for (int StageLength = MinimumGreen; StageLength < MaxGreenTime + 1; StageLength++)
 			        {
-                        List<int[]> CyclePlan = new List<int[]>();
-                        CyclePlan.Clear();
-
-                        int[] StageAndLength = new int[2];      //This is the Stage Number followed by the Stage Length
-                        StageAndLength[0] = StageNumber;
-                        StageAndLength[1] = StageLength;
-
-                        CyclePlan.Add(StageAndLength);
-                        CyclePlan.Add(IntergreenAndLength);
-
-                        int InitialCyclePlanLength = 0;
-                        InitialCyclePlanLength = CyclePlanLength(CyclePlan);
-
-                        double InitialDelay = FF.RunnerFunction(CyclePlan, LeastDelay, CurrentRoadState, PhaseList);
-                        double InitialDelayPerSecond = InitialDelay / InitialCyclePlanLength;
-
-                        if (InitialDelayPerSecond < LeastDelayPerSecond)                                          //This just checks to see if the initial seed is the best cycle plan
+                        if ((StageNumber == 3 || StageNumber == 4) && StageLength > FixedVariables.MaxGreenTimeForStage3Or4)
                         {
-                            LeastDelay = InitialDelay;
-                            BestCyclePlan = CyclePlan;
-                            LeastDelayPerSecond = InitialDelayPerSecond;
+                            break;
+                        }
+
+                        if (StageNumber == 2 && StageLength > FixedVariables.MaxGreenTimeForStage2)
+                        {
+                            break;
+                        }
+
+                        else
+                        {
+                            List<int[]> CyclePlan = new List<int[]>();
+                            CyclePlan.Clear();
+
+                            int[] StageAndLength = new int[2];      //This is the Stage Number followed by the Stage Length
+                            StageAndLength[0] = StageNumber;
+                            StageAndLength[1] = StageLength;
+
+                            CyclePlan.Add(StageAndLength);
+                            CyclePlan.Add(IntergreenAndLength);
+
+                            int InitialCyclePlanLength = 0;
+                            InitialCyclePlanLength = CyclePlanLength(CyclePlan);
+
+                            double InitialDelay = FF.RunnerFunction(CyclePlan, LeastDelay, CurrentRoadState, PhaseList);
+
+                            double WeightingFactor = WeightingTimeSinceReleased(StageNumber, TimeSinceReleased, PhaseList, CurrentRoadState);       //This ensures that the delay is adjusted if the stage has not been released for a long time
+
+                            double InitialDelayPerSecond = (InitialDelay * WeightingFactor) / InitialCyclePlanLength;
+
+                            if (InitialDelayPerSecond < LeastDelayPerSecond)                                          //This just checks to see if the initial seed is the best cycle plan
+                            {
+                                LeastDelay = InitialDelay;
+                                BestCyclePlan = CyclePlan;
+                                LeastDelayPerSecond = InitialDelayPerSecond;
+                            }
                         }
 
 			        }

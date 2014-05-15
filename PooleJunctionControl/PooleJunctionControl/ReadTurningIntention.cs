@@ -9,7 +9,7 @@ namespace ParamincsSNMPcontrol
 {
     class ReadTurningIntention
     {
-        public string NetName = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\TurningDirections - Simple Crossroad";
+        /*public string NetName = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\TurningDirections - Simple Crossroad";
 
         /// <summary>
         /// This  returns the link number being turned onto. (i.e. moving from link 1 0 to link 0 3
@@ -32,6 +32,6 @@ namespace ParamincsSNMPcontrol
                 }
             }
             return Returner;
-        }
+        }*/
     }
 }

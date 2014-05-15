@@ -30,7 +30,7 @@ namespace ParamicsPuppetMaster
 
             foreach (ReadSnapshotFileLite.FileData SFD in RSF.Fdata)
             {
-                VehicleDataLite TEMP = new VehicleDataLite(); 
+                VehicleDataLite TEMP = new VehicleDataLite();
                 TEMP.AtTime = SFD.AtTime;
                 TEMP.OnLink = SFD.OnLink;
                 TEMP.LinkDist = SFD.LinkDist;

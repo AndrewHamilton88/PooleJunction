@@ -65,7 +65,7 @@ namespace ParamincsSNMPcontrol
         }
 
         //function
-        public virtual List<int[]> EvaluationProcess(int ModelTimeofDay, int[] PreviousStage)
+        public virtual List<int[]> EvaluationProcess(int ModelTimeofDay, int[] PreviousStage, Returner ReturnerVariables)
         {
             TimeSpan TS = new TimeSpan(0, 0, ModelTimeofDay / 100);
             string TimeOfDay = TS.ToString();
@@ -89,7 +89,7 @@ namespace ParamincsSNMPcontrol
             
 
 
-            MainZone.CoordinateJunctions(ModelTimeofDay,PreviousStage);
+            MainZone.CoordinateJunctions(ModelTimeofDay,PreviousStage,ReturnerVariables);
             WriteBidsDatabase(ModelTimeofDay);
 
             /*foreach (int item in MainZone.NextStages)
@@ -97,6 +97,8 @@ namespace ParamincsSNMPcontrol
                 Console.WriteLine(item);
                 Console.Read();
             }*/
+
+            ReturnerVariables.CyclePlan = MainZone.NextStages;
 
 
             return (MainZone.NextStages);           //AH - this is where the next stage is finalised

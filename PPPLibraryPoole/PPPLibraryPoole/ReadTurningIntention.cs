@@ -15,10 +15,10 @@ namespace ParamicsPuppetMaster
         public string PrioritiesStages = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads\priorities_file"; //This is the required stage*/
 
         //This is the simple crossroads 3 lanes data files...
-        public string LinkTurningFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads - 3 Lane Approach with Sensors\3LaneApproachMovements"; //This is the clockwise link order
-        public string LinkFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads - 3 Lane Approach with Sensors\links";
-        public string PrioritiesFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads - 3 Lane Approach with Sensors\priorities";
-        public string PrioritiesStages = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads\priorities_file"; //This is the required stage
+        public string LinkTurningFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Poole Junction\PooleJunctionApproachMovements.txt"; //This is the clockwise link order
+        //public string LinkFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Poole Junction\Paramics 2010.1 Version\Cabot Lane Poole V3\links";
+        //public string PrioritiesFile = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Poole Junction\Paramics 2010.1 Version\Cabot Lane Poole V3\priorities";
+        //public string PrioritiesStages = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads\priorities_file"; //This is the required stage
 
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace ParamicsPuppetMaster
             return "null";
         }
 
-        public string StageRequired(string ApproachNode, string NextLinkNumber)
+        /*public string StageRequired(string ApproachNode, string NextLinkNumber)
         {
             string Returner = "";
             using (StreamReader ReadFile = new StreamReader(PrioritiesStages))
@@ -76,7 +76,7 @@ namespace ParamicsPuppetMaster
                 }
             }
             return "null";
-        }
+        }*/
 
         /// <summary>
         /// This  returns the direction they are turning. (i.e. 'Left'.)

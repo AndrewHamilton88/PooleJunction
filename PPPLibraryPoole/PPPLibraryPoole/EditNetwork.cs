@@ -627,6 +627,49 @@ namespace ParamicsPuppetMaster
             }
 
         }
+
+        public void SetStartTime(double StartTime)
+        {
+            string Contents = "";
+
+            using (StreamReader ReadFile = new StreamReader((NetPath + "\\" + FileName)))// open the paths file
+            {
+
+                try
+                {
+                    string FileLine;
+                    while ((FileLine = ReadFile.ReadLine()) != null)//read the file line by line
+                    {
+                        if (FileLine.Contains("start time "))
+                        {
+                            FileLine = "start time  " + StartTime.ToString() + ":00:00\n";
+                        }
+                        Contents += FileLine + '\n';
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Let the user know what went wrong.
+                    Console.WriteLine("The configuration file could not be read:");
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+            using (StreamWriter WriteFile = new StreamWriter((NetPath + "\\" + FileName))) // create a new text file to write to.
+            {
+                try
+                {
+                    WriteFile.Write(Contents);
+                }
+                catch (Exception e)
+                {
+                    // Let the user know what went wrong.
+                    Console.WriteLine("There was a problem writing configuration file");
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+        }
     }
 
     public class LinkID

@@ -31,14 +31,14 @@ namespace ParamicsPuppetMaster
             string ResultTurningIntention;
             ResultTurningIntention = RTI.NextLinkNumber("4", "0", "2");
 
-            string ResultStageNumber;
-            ResultStageNumber = RTI.StageRequired("3", "4");
+            //string ResultStageNumber;
+            //ResultStageNumber = RTI.StageRequired("3", "4");
             //string ResultNextTurningIntention = RTI.NextNextLinkNumber(ResultTurningIntention, "0");
 
             Console.WriteLine(X);
             Console.WriteLine(Y);
             Console.WriteLine(ResultTurningIntention);
-            Console.WriteLine(ResultStageNumber);
+            //Console.WriteLine(ResultStageNumber);
             //Console.WriteLine(ResultNextTurningIntention);
             Console.Read();
         }

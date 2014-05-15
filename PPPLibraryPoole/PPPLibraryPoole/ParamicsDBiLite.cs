@@ -32,6 +32,7 @@ namespace ParamicsPuppetMaster
 
             string BuildVDataTab = ("CREATE TABLE IF NOT EXISTS " + VDataTab);
             BuildVDataTab += " (AtTime TIME, OnLink VARCHAR(50), AlongLink DOUBLE, Speed DOUBLE, VehicleType INT, LaneNum INT,BornTime TIME, Source VARCHAR(15), NextLink VARCHAR(15), NextNextLink VARCHAR(15), NextTurn VARCHAR(15), NextNextTurn VARCHAR(15),  PRIMARY KEY (AtTime,OnLink,AlongLink,LaneNum)); ";
+            //BuildVDataTab += " (AtTime VARCHAR(20), OnLink VARCHAR(50), AlongLink DOUBLE, Speed DOUBLE, VehicleType INT, LaneNum INT,BornTime TIME, Source VARCHAR(15), NextLink VARCHAR(15), NextNextLink VARCHAR(15), NextTurn VARCHAR(15), NextNextTurn VARCHAR(15),  PRIMARY KEY (AtTime,OnLink,AlongLink,LaneNum)); ";
 
             MySqlCommand MakeTable = new MySqlCommand((BuildVDataTab), DBconnect);
 
@@ -247,6 +248,7 @@ namespace ParamicsPuppetMaster
             DropTableFromParamicsDB();
 
             string BuildBidDataTab = ("CREATE TABLE " + VDataTab + "(AtTime TIME");
+            //string BuildBidDataTab = ("CREATE TABLE " + VDataTab + "(AtTime VARCHAR(20)");
             for (int i = 1; i <= AgtNum; i++)
             {
                 BuildBidDataTab += ", Bid" + i.ToString() + " DOUBLE";

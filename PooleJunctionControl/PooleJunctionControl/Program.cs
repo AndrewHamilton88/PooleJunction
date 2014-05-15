@@ -16,7 +16,7 @@ namespace ParamincsSNMPcontrol
         static void Main(string[] args)
         {
             
-            string IP = "152.78.97.184";
+            string IP = "152.78.241.226";
             int port = 2525;
             
             HighBidTurn ST1 = new HighBidTurn();
@@ -26,7 +26,7 @@ namespace ParamincsSNMPcontrol
 
             //This is to create a directory which records the MySQL results in a time and date folder
             String Todaysdate = DateTime.Now.ToString("dd-MM-yyyy-HH.mm");
-            string ResultsDirectory = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Simple Crossroads\Simple Crossroads - 3 Lane Approach with Sensors\Results\" + Todaysdate;
+            string ResultsDirectory = @"C:\Documents and Settings\Siemens\Desktop\Andrew's Work\Paramics Models\Poole Junction\Paramics 2010.1 Version\Cabot Lane Poole V3\Results\" + Todaysdate;
             
             if(!Directory.Exists(ResultsDirectory))
             {
@@ -52,7 +52,10 @@ namespace ParamincsSNMPcontrol
                     //TestC = new coordinateSIT("JunctionDesignTriC.XML", ST1, IP, port); // <--- Simon used this one 05/11/12
                     //TestC = new Coordinate("JunctionDesignMillbrook.XML", ST1, IP, port); //<--- Simon used this one 20/11/12
                     //TestC = new Coordinate("JunctionDesignSimpleCrossroads.XML", ST1, IP, port); //Andrew's attempt on Simple Crossroads 20/11/12
-                    TestC = new Coordinate("JunctionDesignSimpleCrossroads3Lane.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 02/09/13
+                    
+                    //TestC = new Coordinate("JunctionDesignSimpleCrossroads3Lane.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 02/09/13
+                    TestC = new Coordinate("JunctionDesignPooleJunction.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 02/09/13
+                    
                     //TestC = new coordinateSIT("JunctionDesignSimpleCrossroads3Lane.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 04/12/13
                     //TestC = new Coordinate("JunctionDesignSimpleCrossroads2LaneStraightBoth.XML", ST1, IP, port); //Andrew's Simple Crossroads - 2 lane - Both Straight Ahead 04/12/13
                     //TestC = new Coordinate("JunctionDesignSimpleCrossroads2LaneStraightLeft.XML", ST1, IP, port); //Andrew's Simple Crossroads - 2 lane - Straight and Left Lane Together, Dedicated Right 04/12/13
@@ -60,6 +63,7 @@ namespace ParamincsSNMPcontrol
 
                     ParamicsPuppetMaster.EditConfig ECG = new ParamicsPuppetMaster.EditConfig(TestC.ParamicsPath);
                     ECG.SetDemandRate(100);
+                    ECG.SetStartTime(07);
 
                     //ParamicsPuppetMaster.EditDemands EDM = new ParamicsPuppetMaster.EditDemands(TestC.ParamicsPath, A.Demands);
                 }
@@ -70,8 +74,8 @@ namespace ParamincsSNMPcontrol
 
                 try
                 {
-                    //ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
-                    ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
+                    ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
+                    //ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
                     StartParamicsModel.LauncParamics();
 
 

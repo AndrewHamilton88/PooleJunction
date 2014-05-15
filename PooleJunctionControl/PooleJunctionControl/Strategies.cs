@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using Mapack;
 using ParamicsSNMPcontrol;
+using System.Linq;
 
 namespace ParamincsSNMPcontrol
 {
@@ -13,8 +14,8 @@ namespace ParamincsSNMPcontrol
         public abstract void ProcessLane(LaneAgent LA);
         //public abstract void ProcessLaneTurns(LaneAgent LA, int[] Turns);       //AH added
         public abstract void ProcessStage(StageAgent SA);
-        public abstract void ProcessJunction(JunctionAgent JA, int[] PreviousStage);
-        public abstract void ProcessZone(ZoneAgent ZA, int ToD, int[] PreviousStage);
+        public abstract void ProcessJunction(JunctionAgent JA, int[] PreviousStage, Returner ReturnerVariables);
+        public abstract void ProcessZone(ZoneAgent ZA, int ToD, int[] PreviousStage, Returner ReturnerVariables);
 
         public class Bid
         {
@@ -69,7 +70,7 @@ namespace ParamincsSNMPcontrol
             //Console.WriteLine(pBid);
             //SA.StageBid = B;
         }
-        public override void ProcessJunction(JunctionAgent JA, int[] PreviousStage)
+        public override void ProcessJunction(JunctionAgent JA, int[] PreviousStage, Returner ReturnerVariables)
         {
             //test that number of stages and agents match
             JA.AllRoadStates.Clear();
@@ -108,35 +109,45 @@ namespace ParamincsSNMPcontrol
             List<int[]> CyclePlan = new List<int[]>();
             CyclePlan.Clear();
 
-            FixedVariables FV = new FixedVariables();
-            RunnerCyclePlan RunCyclePlan = new RunnerCyclePlan();
+            double NumberOfVehicles = ReturnNumberOfVehicles(TwelvePhaseRoadStates);
 
-            //4 Stage Model
-            //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesFourStageModel());
+            if (NumberOfVehicles >= FixedVariables.MaxNumberOfVehiclesAtJunction)          //This is a way of using a fixed time cycle if the number of cars exceeds a certain value....
+            {
+                Console.WriteLine("There are this many cars..." + NumberOfVehicles);
+            }
+            if (true)
+            {
+
+                FixedVariables FV = new FixedVariables();
+                RunnerCyclePlan RunCyclePlan = new RunnerCyclePlan();
+
+                //4 Stage Model
+                //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesFourStageModel());
+
+                //8 Stage Model
+                //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesEightStageModel());
+
+                //17 Stage Model
+                //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesSeventeenStageModel());
+
+                //RunnerSingleStage RunSS = new RunnerSingleStage();
+                RunnerAllSingleStageOptions RunAllSS = new RunnerAllSingleStageOptions();
+
+                //8 Stage - Single Stage Selection Model
+                //CyclePlan = RunSS.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel());
+                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel());
+
+                //4 Stage - Single Stage Selection Model - All Combinations checked
+                CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables.TimeSinceReleased);
+                UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables);
+
+                //17 Stage - Single Stage Selection Model - All Combinations checked
+                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesSeventeenStageModel());
+
+                //2 Stage - Single Stage Selection Model - All Combinations checked
+                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesTwoStageModel());
+            }
             
-            //8 Stage Model
-            //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesEightStageModel());
-
-            //17 Stage Model
-            //CyclePlan = RunCyclePlan.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, RunCyclePlan.PopulatePhasesSeventeenStageModel());
-
-            //RunnerSingleStage RunSS = new RunnerSingleStage();
-            RunnerAllSingleStageOptions RunAllSS = new RunnerAllSingleStageOptions();
-
-            //8 Stage - Single Stage Selection Model
-            //CyclePlan = RunSS.RunAlgorithm(FV.StartingSeeds, FV.StepsClimbed, FV.MutationsAroundAPoint, TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel());
-            //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel());
-
-            //4 Stage - Single Stage Selection Model - All Combinations checked
-            CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesFourStageModel());
-
-
-            //17 Stage - Single Stage Selection Model - All Combinations checked
-            //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesSeventeenStageModel());
-
-
-            //2 Stage - Single Stage Selection Model - All Combinations checked
-            //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesTwoStageModel());
 
             List<int[]> FinalAnswer = new List<int[]>();        //This is to remove the (99,5) Intergreen Phase
             FinalAnswer.Clear();
@@ -180,7 +191,7 @@ namespace ParamincsSNMPcontrol
 
             //JA.NextStage = WinningStage;*/
         }
-        public override void ProcessZone(ZoneAgent ZA,int ToD, int[] PreviousStage)
+        public override void ProcessZone(ZoneAgent ZA, int ToD, int[] PreviousStage, Returner ReturnerVariables)
         {
             GreedyNextStages(ZA);
         }
@@ -195,6 +206,37 @@ namespace ParamincsSNMPcontrol
                 NextStages = ZA.Junctions[i].NextStage;
             }
             ZA.NextStages = NextStages;
+        }
+
+        private void UpdateTimeSinceReleased(List<int[]> CyclePlan, List<int[]> PhaseCombinations, Returner ReturnerVariables)
+        {
+            foreach (int[] StageAndTime in CyclePlan)
+            {
+                if (StageAndTime[0] != FixedVariables.IntergreenStageNumber)
+                {
+                    int[] ActivePhases = PhaseCombinations[StageAndTime[0] - 1];
+                    for (int i = 1; i < 13; i++)
+                    {
+                        if (ActivePhases.Contains(i))           //This checks to see if the phase is active or not
+                        {
+                            ReturnerVariables.TimeSinceReleased[i - 1] = 0;
+                        }
+                        else
+                        {
+                            ReturnerVariables.TimeSinceReleased[i - 1] += StageAndTime[1];
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    for (int i = 0; i < 12; i++)
+                    {
+                        ReturnerVariables.TimeSinceReleased[i] += StageAndTime[1];       //This adds the intergreen time to the Time since released
+                    }
+                }
+            }
+
         }
 
         private List<double[]> ReturnFourStageSolution(List<double[,]> AllRoadStates)
@@ -249,6 +291,17 @@ namespace ParamincsSNMPcontrol
             }
             return Answer;
         }
+
+        private double ReturnNumberOfVehicles(List<double[]> TwelveRoadStates)
+        {
+            double NumberOfVehicles = 0.0;
+
+            foreach (double[] Phase in TwelveRoadStates)
+            {
+                NumberOfVehicles += Phase[0] + (Phase[1] / FixedVariables.ArrivalRateValue * FixedVariables.MaxCycleTime);
+            }
+            return NumberOfVehicles;
+        }
     }
 
 
@@ -277,9 +330,9 @@ namespace ParamincsSNMPcontrol
 
         }
 
-        public override void ProcessZone(ZoneAgent ZA, int ToD, int[] PreviousStage)
+        public override void ProcessZone(ZoneAgent ZA, int ToD, int[] PreviousStage, Returner ReturnerVariables)
         {
-            base.ProcessZone(ZA, ToD, PreviousStage);
+            base.ProcessZone(ZA, ToD, PreviousStage, ReturnerVariables);
 
         }
     }

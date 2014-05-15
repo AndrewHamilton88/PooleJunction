@@ -93,42 +93,115 @@ namespace ParamincsSNMPcontrol
             TurningMovements[0] = 0; TurningMovements[1] = 0; TurningMovements[2] = 0;
             CountTurns[0] = 0; CountTurns[1] = 0; CountTurns[2] = 0;
 
+            double DistanceFromJunction = FixedVariables.DistanceFromJunction;
             TimeSpan TS = new TimeSpan(0, 0, ToD / 100);
             string TimeOfDay = TS.ToString();
             
 
             foreach (BitOfRoad BoR in RoadSegments)
             {
-                string ConditionLine = "AtTime = '" + TimeOfDay + "' AND";
-                //ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "'";
-                ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "' AND ";
-                //ConditionLine += " AlongLink < '25' AND ";                                     //NB. AH added this line to consider vehicles within 'X' metres of the junction
-                ConditionLine += "LaneNum = " + BoR.LaneNum + " AND " + "NextTurn = '";
-                string[] Directions = new string[3];
-                Directions[0] = "Right"; Directions[1] = "Straight"; Directions[2] = "Left";        //NB. AH - has changed the order [0] - Right, [1] - Straight, [2] - Left
-
-                for (int i = 0; i < 3; i++)
+                if (BoR.EndNode == "7")         //This is because approaching from the South has an extra node so we cannot see the turning direction! But I attempt to add the vehicle to each of the turning movements for the road state variable
                 {
-                    List<double[]> SpeedDist = NetDat.PDB.GetSpeedAndDistane(ConditionLine + Directions[i] + "'");      //This returns the vehicles sorted from closest vehicle to farthest
-                    
+                    string ConditionLine = "AtTime = '" + TimeOfDay + "' AND";
+                    ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "' AND ";
+                    ConditionLine += "LaneNum = " + BoR.LaneNum + " AND " + "NextTurn = 'None'";
 
-                    foreach (double[] SD in SpeedDist)
+                    List<double[]> SpeedDist = NetDat.PDB.GetSpeedAndDistane(ConditionLine);      //This returns the vehicles sorted from closest vehicle to farthest
+
+                    for (int i = 0; i < 3; i++)
                     {
-                        AvSpeedTurns[i] += SD[0];
-                        AvDistTurns[i] += SD[1] + BoR.Offset;
-                        CountTurns[i]++;
-                        if (SD[1] <= 50 + BoR.Offset || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                        foreach (double[] SD in SpeedDist)
                         {
-                            RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                            if (SD[1] + BoR.Offset <= DistanceFromJunction)         //This ensures that only vehicles within 'x' metres are considered
+                            {
+                                //CountTurns[i]++;
+                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0] += 0.3333333;          //Add one third to the vehicle queue length for that turning movement
+                                }
+                                else
+                                {
+                                    RoadState[i, 1] += 0.3333333;          //Add one third to the vehicle arrival rate for that turning movement
+                                }
+                            }
+                            //AvSpeedTurns[i] += SD[0];
+                            //AvDistTurns[i] += SD[1] + BoR.Offset;
+
                         }
-                        else
-                        {
-                            RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
-                        }
-                        //SpeedList.Add(SD[0]);
-                        //DistList.Add(SD[1] + BoR.Offset);
+                        //TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
                     }
-                    TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
+                }
+
+                else
+                {
+                    string ConditionLine = "AtTime = '" + TimeOfDay + "' AND";
+                    //ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "'";
+                    ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "' AND ";
+                    //ConditionLine += " AlongLink < '25' AND ";                                     //NB. AH added this line to consider vehicles within 'X' metres of the junction
+                    ConditionLine += "LaneNum = " + BoR.LaneNum + " AND " + "NextTurn = '";
+                    string[] Directions = new string[3];
+                    Directions[0] = "Right"; Directions[1] = "Straight"; Directions[2] = "Left";        //NB. AH - has changed the order [0] - Right, [1] - Straight, [2] - Left
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        List<double[]> SpeedDist = NetDat.PDB.GetSpeedAndDistane(ConditionLine + Directions[i] + "'");      //This returns the vehicles sorted from closest vehicle to farthest
+
+
+                        foreach (double[] SD in SpeedDist)
+                        {
+                            AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
+                            AvDistTurns[i] += SD[1] + BoR.Offset;
+                            CountTurns[i]++;
+                            if (SD[1] + BoR.Offset <= DistanceFromJunction)
+                            {
+                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                }
+                                else
+                                {
+                                    RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                }
+                                //SpeedList.Add(SD[0]);
+                                //DistList.Add(SD[1] + BoR.Offset);
+                            }
+
+                        }
+                        TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
+                    }
+
+                    string ConditionLine2 = "AtTime = '" + TimeOfDay + "' AND";
+                    //ConditionLine += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "'";
+                    ConditionLine2 += " OnLink = '" + BoR.StartNode + ":" + BoR.EndNode + "' AND ";
+                    //ConditionLine += " AlongLink < '25' AND ";                                     //NB. AH added this line to consider vehicles within 'X' metres of the junction
+                    ConditionLine2 += "LaneNum = " + BoR.LaneNum + " AND " + "NextNextTurn = '";
+
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        List<double[]> SpeedDist = NetDat.PDB.GetSpeedAndDistane(ConditionLine2 + Directions[i] + "'");      //This returns the vehicles sorted from closest vehicle to farthest
+
+                        foreach (double[] SD in SpeedDist)
+                        {
+                            AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
+                            AvDistTurns[i] += SD[1] + BoR.Offset;
+                            CountTurns[i]++;
+                            if (SD[1] + BoR.Offset <= DistanceFromJunction)
+                            {
+                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                }
+                                else
+                                {
+                                    RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                }
+                                //SpeedList.Add(SD[0]);
+                                //DistList.Add(SD[1] + BoR.Offset);
+                            }
+                        }
+                        TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
+                    }
                 }
             }
 
@@ -139,7 +212,17 @@ namespace ParamincsSNMPcontrol
                     AvSpeedTurns[i] = AvSpeedTurns[i] / CountTurns[i];
                     AvDistTurns[i] = AvDistTurns[i] / CountTurns[i];
                 }
-                RoadState[i, 1] = RoadState[i, 1] * 2.7 / 120;        //Assume a weighting of '2.7' for the number of vehicles likely to arrive within 120 seconds (so any vehicle visible currently is assumed to arrive within 45 seconds - ie. 120/45 = 2.7)
+
+                /*if (RoadState[i, 0] >= 15)       //I've selected 15 because discharge is roughly 0.5 pcu/sec and maximum green time is 25 secs plus intergreen so approx 15 can get through in one stage 05/05/14
+                {                                   //This has always made the prediction much worse 07/05/14
+                    double Difference = RoadState[i, 0] - 15;
+                    RoadState[i, 0] = 15;
+                    RoadState[i, 1] += Difference;
+                }*/
+
+
+
+                RoadState[i, 1] = RoadState[i, 1] * FixedVariables.ArrivalRateValue / FixedVariables.MaxCycleTime;        //Assume a weighting of '2.7' for the number of vehicles likely to arrive within 120 seconds (so any vehicle visible currently is assumed to arrive within 45 seconds - ie. 120/45 = 2.7)
             }
             RoadState[0, 2] = 0.46;             //These are the pcu discharge rates for straight movements and unopposed turning movements from TAL 1/06 (British guidelines)
             RoadState[1, 2] = 0.53;
@@ -240,7 +323,7 @@ namespace ParamincsSNMPcontrol
         }
 
         //*Function for mediating the auction
-        public void MediateAuction(int ToD, int[] PreviousStage)
+        public void MediateAuction(int ToD, int[] PreviousStage, Returner ReturnerVariables)
         {
             AllPhases.Clear();
             foreach (StageAgent SA in Stages)
@@ -251,7 +334,7 @@ namespace ParamincsSNMPcontrol
                     AllPhases.Add(PhaseBid);
                 }
             }
-            Strat.ProcessJunction(this, PreviousStage);
+            Strat.ProcessJunction(this, PreviousStage, ReturnerVariables);
 
         }
 
@@ -306,13 +389,13 @@ namespace ParamincsSNMPcontrol
         }
 
         //function for coordinating junction
-        public void CoordinateJunctions(int ToD, int[] PreviousStage)
+        public void CoordinateJunctions(int ToD, int[] PreviousStage, Returner ReturnerVariables)
         {
             foreach (JunctionAgent JA in Junctions)
             {
-                JA.MediateAuction(ToD, PreviousStage);
+                JA.MediateAuction(ToD, PreviousStage, ReturnerVariables);
             }
-            Strat.ProcessZone(this, ToD, PreviousStage);
+            Strat.ProcessZone(this, ToD, PreviousStage, ReturnerVariables);
             //WriteBidsDataBase(ToD);
             //WriteSITDataBase(ToD);
         }

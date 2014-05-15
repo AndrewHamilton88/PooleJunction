@@ -68,6 +68,10 @@ namespace ParamincsSNMPcontrol
                     TempDelayTotal += Perf.DelayFunctionOtherStagesVer2(Stage[0], Stage[1], TempRoadState, LeastDelay, PhaseList);   //Determines 'off' stages's delay  
                     TempDelayTotal += Perf.DelayFunctionCurrentStageVer2(Stage[0], Stage[1], TempRoadState, PhaseList);   //Calculates the delay to the remaining queued vehicles on current stage
                     TempRoadState = Queue.UpdateQueueLength(Stage[0], Stage[1], TempRoadState, PhaseList);     //Updates current queues
+
+                    //TempDelayTotal += Perf.DelayFunctionOtherStagesVer3(Stage[0], Stage[1], TempRoadState, LeastDelay, PhaseList);    //This function calculates the average delay per vehicle on each phase which is not active
+                    //TempDelayTotal += Perf.DelayFunctionCurrentStageVer3(Stage[0], Stage[1], TempRoadState, PhaseList);               //This function calculates the average delay per vehicle on each phase which is active
+                    //TempRoadState = Queue.UpdateQueueLength(Stage[0], Stage[1], TempRoadState, PhaseList);
                 }
                 else
                 {
