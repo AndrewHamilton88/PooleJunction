@@ -114,10 +114,11 @@ namespace ParamincsSNMPcontrol
             if (NumberOfVehicles >= FixedVariables.MaxNumberOfVehiclesAtJunction)          //This is a way of using a fixed time cycle if the number of cars exceeds a certain value....
             {
                 Console.WriteLine("There are this many cars..." + NumberOfVehicles);
+                CyclePlan = FixedTimePlan(PreviousStage[0]);
+                Console.WriteLine("Stage " + CyclePlan[0][0] + " called for " + CyclePlan[0][1] + "seconds");
             }
-            if (true)
+            else
             {
-
                 FixedVariables FV = new FixedVariables();
                 RunnerCyclePlan RunCyclePlan = new RunnerCyclePlan();
 
@@ -237,6 +238,40 @@ namespace ParamincsSNMPcontrol
                 }
             }
 
+        }
+
+        private List<int[]> FixedTimePlan(int PreviousStage)
+        {
+            List<int[]> CyclePlan = new List<int[]>();
+            CyclePlan.Clear();
+            int[] StageNumberAndLength = new int[2];
+            int[] Intergreen = new int[2];
+            Intergreen[0] = FixedVariables.IntergreenStageNumber;
+            Intergreen[1] = FixedVariables.IntergreenTime;
+
+            if (PreviousStage == 1)
+            {
+                StageNumberAndLength[0] = 2;
+                StageNumberAndLength[1] = FixedVariables.MaxGreenTimeForStage2;
+            }
+            if (PreviousStage == 2)
+            {
+                StageNumberAndLength[0] = 3;
+                StageNumberAndLength[1] = FixedVariables.MaxGreenTimeForStage3;
+            }
+            if (PreviousStage == 3)
+            {
+                StageNumberAndLength[0] = 4;
+                StageNumberAndLength[1] = FixedVariables.MaxGreenTimeForStage4;
+            }
+            if (PreviousStage == 4)
+            {
+                StageNumberAndLength[0] = 1;
+                StageNumberAndLength[1] = FixedVariables.MaximumGreenTime;
+            }
+            CyclePlan.Add(StageNumberAndLength);
+            CyclePlan.Add(Intergreen);
+            return CyclePlan;
         }
 
         private List<double[]> ReturnFourStageSolution(List<double[,]> AllRoadStates)

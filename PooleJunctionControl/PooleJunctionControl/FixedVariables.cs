@@ -15,17 +15,18 @@ namespace ParamincsSNMPcontrol
         public static int NumberOfPhases = 12;
         public static int MinimumGreenTime = 7;
         public static int IntergreenTime = 5;
-        public static int MaximumGreenTime = 50;
+        public static int MaximumGreenTime = 55;
         public static int IntergreenStageNumber = 99;
         public static int MaxCycleTime = 120;
         public int IntergreenTimeVariable = 5;
         public static int MaxTimeSinceReleased = 120;
         public static double MaxTimeSinceReleasedWeighting = 0.75;
         public static double DistanceFromJunction = 500;
-        public static int MaxGreenTimeForStage3Or4 = 30;
+        public static int MaxGreenTimeForStage3 = 25;
+        public static int MaxGreenTimeForStage4 = 25;
         public static int MaxGreenTimeForStage2 = 45;
-        public static double ArrivalRateValue = 2.7;
-        public static double MaxNumberOfVehiclesAtJunction = 100;
+        public static double ArrivalRateValue = 4.0;
+        public static double MaxNumberOfVehiclesAtJunction = 1000;
 
         //Four Stage Model
         public double[] Stage1 = { 2, 2, 3};  //double [] will contain [0] = queue length, [1] = arrival rate, [2] = discharge rate

@@ -97,7 +97,12 @@ namespace ParamincsSNMPcontrol
 	            {
                     for (int StageLength = MinimumGreen; StageLength < MaxGreenTime + 1; StageLength++)
 			        {
-                        if ((StageNumber == 3 || StageNumber == 4) && StageLength > FixedVariables.MaxGreenTimeForStage3Or4)
+                        if (StageNumber == 3 && StageLength > FixedVariables.MaxGreenTimeForStage3)
+                        {
+                            break;
+                        }
+
+                        if (StageNumber == 4 && StageLength > FixedVariables.MaxGreenTimeForStage4)
                         {
                             break;
                         }

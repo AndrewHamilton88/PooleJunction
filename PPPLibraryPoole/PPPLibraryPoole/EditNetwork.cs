@@ -599,7 +599,7 @@ namespace ParamicsPuppetMaster
                     {
                         if (FileLine.Contains("demand weight"))
                         {
-                            FileLine = "demand weight " + Rate.ToString() + '\n';
+                            FileLine = "demand weight " + Rate.ToString();
                         }
                         Contents += FileLine + '\n';
                     }
@@ -642,7 +642,7 @@ namespace ParamicsPuppetMaster
                     {
                         if (FileLine.Contains("start time "))
                         {
-                            FileLine = "start time  " + StartTime.ToString() + ":00:00\n";
+                            FileLine = "start time  " + StartTime.ToString() + ":00:00";
                         }
                         Contents += FileLine + '\n';
                     }

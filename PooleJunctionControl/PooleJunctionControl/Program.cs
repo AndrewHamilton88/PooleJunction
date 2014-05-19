@@ -39,7 +39,7 @@ namespace ParamincsSNMPcontrol
 
 
             //How many times would you like the program to run
-            int NumberOfRuns = 1;
+            int NumberOfRuns = 3;
             int Counter = 0;
 
             while (Counter < NumberOfRuns)
@@ -74,12 +74,13 @@ namespace ParamincsSNMPcontrol
 
                 try
                 {
-                    ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
-                    //ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
+                    //ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
+                    ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
                     StartParamicsModel.LauncParamics();
 
 
                     TestC.ConnectToParamics();
+                    Thread.Sleep(2000);
                     Runner Run = new Runner(TestC);
 
                     Run.SynchRun(14400);
