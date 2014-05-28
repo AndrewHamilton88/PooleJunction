@@ -39,7 +39,7 @@ namespace ParamincsSNMPcontrol
 
 
             //How many times would you like the program to run
-            int NumberOfRuns = 10;
+            int NumberOfRuns = 5;
             int Counter = 0;
 
             while (Counter < NumberOfRuns)
@@ -55,9 +55,8 @@ namespace ParamincsSNMPcontrol
                     
                     //TestC = new Coordinate("JunctionDesignSimpleCrossroads3Lane.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 02/09/13
                     //TestC = new Coordinate("JunctionDesignPooleJunction.XML", ST1, IP, port); //Stages are same as existing stages - 4 stage solution
-                    TestC = new Coordinate("JunctionDesignPooleJunction - WithTurningIntention.XML", ST1, IP, port); //Stages are adapted to 8 stage solution
-                    //TestC = new Coordinate("JunctionDesignSopersLane.XML", ST1, IP, port); //Stages are adapted to 8 stage solution
-                    
+                    //TestC = new Coordinate("JunctionDesignPooleJunction - WithTurningIntention.XML", ST1, IP, port); //Stages are adapted to 8 stage solution
+                    TestC = new Coordinate("JunctionDesignSopersLane.XML", ST1, IP, port); //Stages are adapted to 8 stage solution
                     
                     //TestC = new coordinateSIT("JunctionDesignSimpleCrossroads3Lane.XML", ST1, IP, port); //Andrew's Simple Crossroads - 3 lane 04/12/13
                     //TestC = new Coordinate("JunctionDesignSimpleCrossroads2LaneStraightBoth.XML", ST1, IP, port); //Andrew's Simple Crossroads - 2 lane - Both Straight Ahead 04/12/13
@@ -66,7 +65,7 @@ namespace ParamincsSNMPcontrol
 
                     ParamicsPuppetMaster.EditConfig ECG = new ParamicsPuppetMaster.EditConfig(TestC.ParamicsPath);
                     ECG.SetDemandRate(100);
-                    ECG.SetStartTime(07);
+                    //ECG.SetStartTime(07);
 
                     //ParamicsPuppetMaster.EditDemands EDM = new ParamicsPuppetMaster.EditDemands(TestC.ParamicsPath, A.Demands);
                 }
@@ -77,8 +76,8 @@ namespace ParamincsSNMPcontrol
 
                 try
                 {
-                    //ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
-                    ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
+                    ParaESVstarter StartParamicsModel = new ParaESVstarter(TestC.ParamicsPath);
+                    //ParaBSMstarter StartParamicsModel = new ParaBSMstarter(TestC.ParamicsPath);
                     StartParamicsModel.LauncParamics();
 
 
@@ -86,7 +85,7 @@ namespace ParamincsSNMPcontrol
                     Thread.Sleep(2000);
                     Runner Run = new Runner(TestC);
 
-                    Run.SynchRun(14400);
+                    Run.SynchRun(4200);
 
                     //AH added this function to save the biddata and linkturningmovements tables after a run
 

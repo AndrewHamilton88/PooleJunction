@@ -11,11 +11,11 @@ namespace ParamincsSNMPcontrol
         public int StepsClimbed = 50;
         public int MutationsAroundAPoint = 50;
         
-        public static int NumberOfStages = 8;
+        public static int NumberOfStages = 4;
         public static int NumberOfPhases = 12;
         public static int MinimumGreenTime = 7;
         public static int IntergreenTime = 5;
-        public static int MaximumGreenTime = 40;
+        public static int MaximumGreenTime = 45;
         public static int IntergreenStageNumber = 99;
         public static int MaxCycleTime = 120;
         public int IntergreenTimeVariable = 5;
@@ -34,7 +34,7 @@ namespace ParamincsSNMPcontrol
 
         public static double MinNumberOfVehiclesAtJunction = 40;
         public static int MaxGreenTimeLowFlow = 20;
-        public static int MaxGreenTimeNormalFlow = 40;
+        public static int MaxGreenTimeNormalFlow = 45;
 
         //Four Stage Model
         public double[] Stage1 = { 2, 2, 3};  //double [] will contain [0] = queue length, [1] = arrival rate, [2] = discharge rate
@@ -42,11 +42,11 @@ namespace ParamincsSNMPcontrol
         public double[] Stage3 = { 5, 3, 4};
         public double[] Stage4 = { 8, 1, 3};
 
-        //4 Stage Active Phases for Poole
-        public int[] Stage1Phases = { 1, 2, 3, 9 };     //These are the active phases when the corresponding stage is called
-        public int[] Stage2Phases = { 6, 7, 8, 9 };  //I've included phase '9' even though it's not signallised but it does release this phase when this stage is called
-        public int[] Stage3Phases = { 4, 5, 6 };
-        public int[] Stage4Phases = { 10, 11, 12 };
+        //4 Stage Active Phases for Sopers Lane...not Cabot Lane
+        public int[] Stage1Phases = { 2, 5, 6 };     //These are the active phases when the corresponding stage is called
+        public int[] Stage2Phases = { 1 };  
+        public int[] Stage3Phases = { 1, 2 };
+        public int[] Stage4Phases = { 7, 9 };
 
         //12 Phase Model
         public double[] Phase1 = { 0.66667, 0.66667, 1 };  //double [] will contain [0] = queue length, [1] = arrival rate, [2] = discharge rate

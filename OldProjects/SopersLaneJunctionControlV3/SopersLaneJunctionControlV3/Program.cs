@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -39,7 +39,7 @@ namespace ParamincsSNMPcontrol
 
 
             //How many times would you like the program to run
-            int NumberOfRuns = 10;
+            int NumberOfRuns = 1;
             int Counter = 0;
 
             while (Counter < NumberOfRuns)
