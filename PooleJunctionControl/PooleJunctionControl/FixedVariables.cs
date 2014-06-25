@@ -11,22 +11,25 @@ namespace ParamincsSNMPcontrol
         public int StepsClimbed = 50;
         public int MutationsAroundAPoint = 50;
         
-        public static int NumberOfStages = 8;
+        public static int NumberOfStages = 4;
         public static int NumberOfPhases = 12;
         public static int MinimumGreenTime = 7;
         public static int IntergreenTime = 5;
-        public static int MaximumGreenTime = 40;
+        public static int MaximumGreenTime = 55;
         public static int IntergreenStageNumber = 99;
         public static int MaxCycleTime = 120;
         public int IntergreenTimeVariable = 5;
         public static int MaxTimeSinceReleased = 120;
         public static double MaxTimeSinceReleasedWeighting = 0.75;
-        public static double DistanceFromJunction = 500;
+        public static double DistanceFromJunction = 200;
         public static int MaxGreenTimeForStage3 = 25;
         public static int MaxGreenTimeForStage4 = 25;
         public static int MaxGreenTimeForStage2 = 45;
         public static double ArrivalRateValue = 4.0;
         public static double MaxNumberOfVehiclesAtJunction = 1000;
+        public static double Detector1DistanceFromJunction = 50;
+        public static double SpeedIncludedInQueue = 3;
+        public static double InfiltrationRate = 1.0; 
 
         public static double UnopposedFlow = 0.458;
         public static double StraightFlow = 0.528;
@@ -34,7 +37,7 @@ namespace ParamincsSNMPcontrol
 
         public static double MinNumberOfVehiclesAtJunction = 40;
         public static int MaxGreenTimeLowFlow = 20;
-        public static int MaxGreenTimeNormalFlow = 40;
+        public static int MaxGreenTimeNormalFlow = 55;
 
         //Four Stage Model
         public double[] Stage1 = { 2, 2, 3};  //double [] will contain [0] = queue length, [1] = arrival rate, [2] = discharge rate

@@ -37,7 +37,7 @@ namespace ParamincsSNMPcontrol
             Process BatchP = new Process();
             BatchP.StartInfo.FileName = "RunParaModel.bat";
             BatchP.Start();
-            Thread.Sleep(2500);
+            Thread.Sleep(5000);
         }
 
     }

@@ -152,13 +152,13 @@ namespace ParamincsSNMPcontrol
 
                 //NB. In 'RunAllSS' there is a function which would not need to be used in 4 stage model - UpdateDischargeRate8Stage
                 //4 Stage - Single Stage Selection Model - All Combinations checked
-                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables.TimeSinceReleased);
-                //UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables);
+                CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables.TimeSinceReleased);
+                UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables);
 
                 //NB. In 'RunAllSS' there is a function which would not need to be used in 4 stage model - UpdateDischargeRate8Stage
                 //8 Stage - Single Stage Selection Model - All Combinations checked if demand
-                CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables.TimeSinceReleased);
-                UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables);
+                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables.TimeSinceReleased);
+                //UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables);
 
                 //17 Stage - Single Stage Selection Model - All Combinations checked
                 //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesSeventeenStageModel());

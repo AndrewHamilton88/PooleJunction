@@ -152,7 +152,7 @@ namespace ParamincsSNMPcontrol
                     UpdateDischargeRates8Stage(CurrentRoadState, StageNumber);      //Note this only works for the 8 stage solution!!
                     for (int StageLength = MinimumGreen; StageLength < MaxGreenTime + 1; StageLength++)
 			        {
-                        /*if (StageNumber == 3 && StageLength > FixedVariables.MaxGreenTimeForStage3)
+                        if (StageNumber == 3 && StageLength > FixedVariables.MaxGreenTimeForStage3)
                         {
                             break;
                         }
@@ -165,11 +165,11 @@ namespace ParamincsSNMPcontrol
                         if (StageNumber == 2 && StageLength > FixedVariables.MaxGreenTimeForStage2)
                         {
                             break;
-                        }*/
-                        if (false)
+                        }
+                        /*if (false)
                         {
                             
-                        }
+                        }*/
                         else
                         {
                             List<int[]> CyclePlan = new List<int[]>();

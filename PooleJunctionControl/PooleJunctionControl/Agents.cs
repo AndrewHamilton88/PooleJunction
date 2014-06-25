@@ -36,6 +36,7 @@ namespace ParamincsSNMPcontrol
         public string feedPercentages;
         public int[] TurningMovements = new int[3]; //This contains the number of [0] - Right, [1] - Straight, [2] - Left turns
         public double[,] RoadState;                 //This gets initialized in the PopulateAgentData function to ensure it starts with a blank array each time
+        Random Rand = new Random();
 
         public Strategies.Bid LaneBid;
 
@@ -115,7 +116,11 @@ namespace ParamincsSNMPcontrol
                             if (SD[1] + BoR.Offset <= DistanceFromJunction)         //This ensures that only vehicles within 'x' metres are considered
                             {
                                 //CountTurns[i]++;
-                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0] += 0.3333333;          //Add one third to the vehicle queue length for that turning movement
+                                }
+                                else if (SD[0] <= FixedVariables.SpeedIncludedInQueue)
                                 {
                                     RoadState[i, 0] += 0.3333333;          //Add one third to the vehicle queue length for that turning movement
                                 }
@@ -149,18 +154,26 @@ namespace ParamincsSNMPcontrol
 
                         foreach (double[] SD in SpeedDist)
                         {
+                            double RandomNumber = Rand.NextDouble();
                             AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
                             AvDistTurns[i] += SD[1] + BoR.Offset;
                             CountTurns[i]++;
                             if (SD[1] + BoR.Offset <= DistanceFromJunction)
                             {
-                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                }
+                                else if (SD[0] <= FixedVariables.SpeedIncludedInQueue && RandomNumber <= FixedVariables.InfiltrationRate)
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
                                 }
                                 else
                                 {
-                                    RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                    if (RandomNumber <= FixedVariables.InfiltrationRate) //This states if the vehicle is not detected then it is ignored from the arrival queue
+                                    {
+                                        RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement                                        
+                                    }                                    
                                 }
                                 //SpeedList.Add(SD[0]);
                                 //DistList.Add(SD[1] + BoR.Offset);
@@ -183,18 +196,26 @@ namespace ParamincsSNMPcontrol
 
                         foreach (double[] SD in SpeedDist)
                         {
+                            double RandomNumber = Rand.NextDouble();
                             AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
                             AvDistTurns[i] += SD[1] + BoR.Offset;
                             CountTurns[i]++;
                             if (SD[1] + BoR.Offset <= DistanceFromJunction)
                             {
-                                if (SD[1] + BoR.Offset <= 50 || SD[0] <= 3)   //If the vehicle's distance from the junction is less than 50m
+                                if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
+                                {
+                                    RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                }
+                                else if (SD[0] <= FixedVariables.SpeedIncludedInQueue && RandomNumber <= FixedVariables.InfiltrationRate)
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
                                 }
                                 else
                                 {
-                                    RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                    if (RandomNumber <= FixedVariables.InfiltrationRate) //This states if the vehicle is not detected then it is ignored from the arrival queue
+                                    {
+                                        RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                    }
                                 }
                                 //SpeedList.Add(SD[0]);
                                 //DistList.Add(SD[1] + BoR.Offset);
