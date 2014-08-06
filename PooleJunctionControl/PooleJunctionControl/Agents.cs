@@ -83,6 +83,36 @@ namespace ParamincsSNMPcontrol
             return (maxLen + maxOff - minOff);
         }
 
+        /// <summary>
+        /// This function enables us to add some gaussian (normal) noise to the distance and speed data so that the accuracy is reduced. The variables required
+        /// are the standard deviations of speed and distance distributions. The mean is assumed to be the actual value.
+        /// </summary>
+        /// <param name="SD"></param>
+        private void RandomNormal(double[] SD)
+        {
+            double Rand1 = 0.0;
+            double Rand2 = 0.0;
+            while (Rand1 == 0.0 || Rand2 == 0.0)
+            {
+                Rand1 = Rand.NextDouble();
+                Rand2 = Rand.NextDouble();
+            }
+            //Console.WriteLine(SD[0] + "....." + SD[1]);
+
+            SD[0] += Math.Cos(2 * Math.PI * Rand1) * Math.Sqrt(-2 * Math.Log(Rand2)) * FixedVariables.SpeedStandardDeviation;
+            SD[1] += Math.Cos(2 * Math.PI * Rand1) * Math.Sqrt(-2 * Math.Log(Rand2)) * FixedVariables.DistanceStandardDeviation;
+
+            if (SD[0] < 0.0)
+            {
+                SD[0] = 0.0;
+            }
+            if (SD[1] < 0.0)
+            {
+                SD[1] = 0.0;
+            }
+            //Console.WriteLine(SD[0] + "....." + SD[1]);
+        }
+
         //Function to get vehicle data from the database - AH editted the function at bottom of class to include turning intention
         public void PopulateAgentData(int ToD)
         {
@@ -109,9 +139,11 @@ namespace ParamincsSNMPcontrol
 
                     List<double[]> SpeedDist = NetDat.PDB.GetSpeedAndDistane(ConditionLine);      //This returns the vehicles sorted from closest vehicle to farthest
 
-                    for (int i = 0; i < 3; i++)
+                    foreach (double[] SD in SpeedDist)
                     {
-                        foreach (double[] SD in SpeedDist)
+                        RandomNormal(SD);
+                        double RandomNumber = Rand.NextDouble();
+                        for (int i = 0; i < 3; i++)
                         {
                             if (SD[1] + BoR.Offset <= DistanceFromJunction)         //This ensures that only vehicles within 'x' metres are considered
                             {
@@ -119,22 +151,32 @@ namespace ParamincsSNMPcontrol
                                 if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
                                 {
                                     RoadState[i, 0] += 0.3333333;          //Add one third to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("A1");
                                 }
-                                else if (SD[0] <= FixedVariables.SpeedIncludedInQueue)
+                                else if (SD[0] <= FixedVariables.SpeedIncludedInQueue && RandomNumber <= FixedVariables.InfiltrationRate)
                                 {
                                     RoadState[i, 0] += 0.3333333;          //Add one third to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("B1");
                                 }
                                 else
                                 {
-                                    RoadState[i, 1] += 0.3333333;          //Add one third to the vehicle arrival rate for that turning movement
+                                    if (RandomNumber <= FixedVariables.InfiltrationRate) //This states if the vehicle is not detected then it is ignored from the arrival queue
+                                    {
+                                        RoadState[i, 1] += 0.3333333;          //Add one to the vehicle arrival rate for that turning movement    
+                                        //Console.WriteLine("C1");
+                                    }
+                                    else if (SD[1] + BoR.Offset <= FixedVariables.Detector2DistanceFromJunction)
+                                    {
+                                        RoadState[i, 1] += 0.3333333;      //This means that if the vehicle hasn't been categorised by any other method, the vehicle will be added to the arrival rate if within 100m*
+                                        //Console.WriteLine("D1");
+                                    }
                                 }
                             }
                             //AvSpeedTurns[i] += SD[0];
                             //AvDistTurns[i] += SD[1] + BoR.Offset;
-
                         }
-                        //TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
                     }
+                        //TurningMovements[i] = CountTurns[i];               // AH changed the code to have a "=" instead of "=+" to reduce any potential confusion (Count turns updates as you cycle through the database - checked on 08/04/14)
                 }
 
                 else
@@ -154,6 +196,7 @@ namespace ParamincsSNMPcontrol
 
                         foreach (double[] SD in SpeedDist)
                         {
+                            RandomNormal(SD);
                             double RandomNumber = Rand.NextDouble();
                             AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
                             AvDistTurns[i] += SD[1] + BoR.Offset;
@@ -163,17 +206,25 @@ namespace ParamincsSNMPcontrol
                                 if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("A2");
                                 }
                                 else if (SD[0] <= FixedVariables.SpeedIncludedInQueue && RandomNumber <= FixedVariables.InfiltrationRate)
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("B2");
                                 }
                                 else
                                 {
                                     if (RandomNumber <= FixedVariables.InfiltrationRate) //This states if the vehicle is not detected then it is ignored from the arrival queue
                                     {
-                                        RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement                                        
-                                    }                                    
+                                        RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement     
+                                        //Console.WriteLine("C2");
+                                    }
+                                    else if (SD[1] + BoR.Offset <= FixedVariables.Detector2DistanceFromJunction)
+                                    {
+                                        RoadState[i, 1]++;      //This means that if the vehicle hasn't been categorised by any other method, the vehicle will be added to the arrival rate if within 100m*
+                                        //Console.WriteLine("D2");
+                                    }
                                 }
                                 //SpeedList.Add(SD[0]);
                                 //DistList.Add(SD[1] + BoR.Offset);
@@ -196,6 +247,7 @@ namespace ParamincsSNMPcontrol
 
                         foreach (double[] SD in SpeedDist)
                         {
+                            RandomNormal(SD);
                             double RandomNumber = Rand.NextDouble();
                             AvSpeedTurns[i] += SD[0];               //Note that the vehicles outside of 'x' metres from the junction are going to be counted in the normal Highbid approach
                             AvDistTurns[i] += SD[1] + BoR.Offset;
@@ -205,16 +257,24 @@ namespace ParamincsSNMPcontrol
                                 if (SD[1] + BoR.Offset <= FixedVariables.Detector1DistanceFromJunction)   //If the vehicle's distance from the junction is less than 50m
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("A3");
                                 }
                                 else if (SD[0] <= FixedVariables.SpeedIncludedInQueue && RandomNumber <= FixedVariables.InfiltrationRate)
                                 {
                                     RoadState[i, 0]++;          //Add one to the vehicle queue length for that turning movement
+                                    //Console.WriteLine("B3");
                                 }
                                 else
                                 {
                                     if (RandomNumber <= FixedVariables.InfiltrationRate) //This states if the vehicle is not detected then it is ignored from the arrival queue
                                     {
                                         RoadState[i, 1]++;          //Add one to the vehicle arrival rate for that turning movement
+                                        //Console.WriteLine("C3");
+                                    }
+                                    else if (SD[1] + BoR.Offset <= FixedVariables.Detector2DistanceFromJunction)
+                                    {
+                                        RoadState[i, 1]++;      //This means that if the vehicle hasn't been categorised by any other method, the vehicle will be added to the arrival rate if within 100m*
+                                        //Console.WriteLine("D3");
                                     }
                                 }
                                 //SpeedList.Add(SD[0]);

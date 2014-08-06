@@ -28,8 +28,11 @@ namespace ParamincsSNMPcontrol
         public static double ArrivalRateValue = 4.0;
         public static double MaxNumberOfVehiclesAtJunction = 1000;
         public static double Detector1DistanceFromJunction = 50;
+        public static double Detector2DistanceFromJunction = 100;
         public static double SpeedIncludedInQueue = 3;
-        public static double InfiltrationRate = 1.0; 
+        public static double InfiltrationRate = 1.0;
+        public static double SpeedStandardDeviation = 0.0;
+        public static double DistanceStandardDeviation = 0.0;
 
         public static double UnopposedFlow = 0.458;
         public static double StraightFlow = 0.528;
@@ -75,6 +78,15 @@ namespace ParamincsSNMPcontrol
         public int[] Stage6Phases8Stage = { 6, 9, 10, 11, 12 };
         public int[] Stage7Phases8Stage = { 4, 6, 9 };
         public int[] Stage8Phases8Stage = { 1, 2, 3, 8, 9 };
+
+        //7 Stage Model for Poole - Re-arranged to match 4 stage solution with extra options on 10/07/14
+        public int[] Stage1Phases7Stage = { 1, 2, 3, 9 };     //These are the active phases when the corresponding stage is called
+        public int[] Stage2Phases7Stage = { 6, 7, 8, 9 };
+        public int[] Stage3Phases7Stage = { 4, 5, 6 };
+        public int[] Stage4Phases7Stage = { 10, 11, 12 };
+        public int[] Stage5Phases7Stage = { 5, 6, 11, 12 };
+        public int[] Stage6Phases7Stage = { 4, 6, 9 };
+        public int[] Stage7Phases7Stage = { 2, 3, 8, 9 };
 
 
         //17 Stage Model

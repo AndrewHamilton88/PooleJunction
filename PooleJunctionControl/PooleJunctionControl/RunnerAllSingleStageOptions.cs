@@ -149,7 +149,7 @@ namespace ParamincsSNMPcontrol
 			{
                 if (StageNumber != PreviousStageNumber)
 	            {
-                    UpdateDischargeRates8Stage(CurrentRoadState, StageNumber);      //Note this only works for the 8 stage solution!!
+                    //UpdateDischargeRates8Stage(CurrentRoadState, StageNumber);      //Note this only works for the 8 stage solution!!
                     for (int StageLength = MinimumGreen; StageLength < MaxGreenTime + 1; StageLength++)
 			        {
                         if (StageNumber == 3 && StageLength > FixedVariables.MaxGreenTimeForStage3)
@@ -163,6 +163,10 @@ namespace ParamincsSNMPcontrol
                         }
 
                         if (StageNumber == 2 && StageLength > FixedVariables.MaxGreenTimeForStage2)
+                        {
+                            break;
+                        }
+                        if ((StageNumber == 5 || StageNumber == 6) && StageLength > FixedVariables.MaxGreenTimeForStage3)
                         {
                             break;
                         }

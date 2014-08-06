@@ -156,6 +156,11 @@ namespace ParamincsSNMPcontrol
                 UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesFourStageModel(), ReturnerVariables);
 
                 //NB. In 'RunAllSS' there is a function which would not need to be used in 4 stage model - UpdateDischargeRate8Stage
+                //7 Stage - Single Stage Selection Model - All Combinations checked
+                //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesSevenStageModel(), ReturnerVariables.TimeSinceReleased);
+                //UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesSevenStageModel(), ReturnerVariables);
+
+                //NB. In 'RunAllSS' there is a function which would not need to be used in 4 stage model - UpdateDischargeRate8Stage
                 //8 Stage - Single Stage Selection Model - All Combinations checked if demand
                 //CyclePlan = RunAllSS.RunAlgorithm(TwelvePhaseRoadStates, PreviousStage[0], RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables.TimeSinceReleased);
                 //UpdateTimeSinceReleased(CyclePlan, RunCyclePlan.PopulatePhasesEightStageModel(), ReturnerVariables);

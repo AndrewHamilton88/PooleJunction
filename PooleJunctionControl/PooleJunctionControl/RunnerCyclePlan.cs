@@ -70,6 +70,18 @@ namespace ParamincsSNMPcontrol
             return ListOfPhases;
         }
 
+        public List<int[]> PopulatePhasesSevenStageModel()        //The phases which are active when the stage is called
+        {
+            ListOfPhases.Add(FV.Stage1Phases7Stage);
+            ListOfPhases.Add(FV.Stage2Phases7Stage);
+            ListOfPhases.Add(FV.Stage3Phases7Stage);
+            ListOfPhases.Add(FV.Stage4Phases7Stage);
+            ListOfPhases.Add(FV.Stage5Phases7Stage);
+            ListOfPhases.Add(FV.Stage6Phases7Stage);
+            ListOfPhases.Add(FV.Stage7Phases7Stage);
+            return ListOfPhases;
+        }
+
         /*public List<int[]> PopulatePhasesSeventeenStageModel()        //The phases which are active when the stage is called
         {
             ListOfPhases.Add(FV.Stage1Phases17Stage);
